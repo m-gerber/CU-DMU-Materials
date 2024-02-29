@@ -1,0 +1,33 @@
+            ### QUESTION 2: ###
+initial results:     | -102.79223281822911
+initial results sem: |   3.530389812869033
+my results:          | -30.917198418373932
+my results sem:      |   3.530389812869033
+---------------------|---------------------
+improvement:         |  71.87503439985518
+
+
+            ### QUESTION 3: ###
+After 7 iterations the actions of :right and then :up has the highest Q value of 93.87. This result makes sense since when we start at 
+[19,19] the string of actions :right and then :up will take us to our terminal reward state of [20,20] where we receive a score of +100.
+The actions :up, :down, :right, and :left individually had scores of 62.57, 77.36, 87.62, and 76.06 respectively. This also makes sense
+since when traversing :up initially, on the next iteration the action taken was :up again, which did not lead to a reward, thus the Q
+value for the initial action was decreased whereas the initial actions of :down and :left still had scores of 77. I believe that the 
+state transitioned to :up after reaching [19,20] due to the transition distribution, since the policy I had written would have selected
+to go :right from [19,20].
+
+
+            ### QUESTION 4: ###
+mean reward:         |  46.056918715287786
+sem reward:          |   1.3712251932011967
+
+
+            ### QUESTION 5: ###
+When trying to increase my score for HW3.evaluate(), I did not try very many things. Curiously, when using my initial policy for the 60x60
+grid world, I got a score around 60; however, the results that I would get when using a policy suited for the larger grid world would
+never achieve that high of a score. I attribute this to the increased complexity in the policy, using the modulus operator as well as more
+conditional statements which increased the time that simulate!() would take to run, which was hard-coded to stop after 40,000,000 ns. My 
+initial results were found using a depth of 100, and 1000 Monte Carlo simulations. In order to try and increase this, I tried changing
+these two parameters. I tried decreasing the depth to a value of 40 since the furthest position from a reward following the optimal policy
+will be at most 40 units away following the Manhattan distance. After doing so, my score increased by approximately 5. By increasing the
+number of Monte Carlo simulations to 2000, the score did not increase.
