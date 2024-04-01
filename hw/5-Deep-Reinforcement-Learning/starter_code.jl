@@ -90,9 +90,6 @@ sim = RolloutSimulator(max_steps=100)
 using CommonRLInterface
 using Flux
 using CommonRLInterface.Wrappers: QuickWrapper
-# using VegaLite
-# using ElectronDisplay # not needed if you're using a notebook or something that can display graphs
-# using DataFrames: DataFrame
 
 # The following are some basic components needed for DQN
 
@@ -107,6 +104,8 @@ function dqn(env)
     Q = Chain(Dense(2, 128, relu),
               Dense(128, length(actions(env))))
 
+    opt = Flux.setup(ADAM(0.0005), Q)
+
     # We can create 1 tuple of experience like this
     s = observe(env)
     a_ind = 1 # action index - the index, rather than the actual action itself, will be needed in the loss function
@@ -119,10 +118,13 @@ function dqn(env)
     # this container should work well for the experience buffer:
     buffer = [experience_tuple]
     # you will need to push more experience into it and randomly select data for training
+    
+    # this is the fixed target Q network
+    Q_target = deepcopy(Q)
 
     # create your loss function for Q training here
     function loss(Q, s, a_ind, r, sp, done)
-        return (r-Q(s)[a_2])^ind # this is not correct! you need to replace it with the true Q-learning loss function
+        return (Q(s)[a_ind] - Q_target(s)[a_ind])^2 # this is not correct! you need to replace it with the true Q-learning loss function
         # make sure to take care of cases when the problem has terminated correctly
     end
 
@@ -130,7 +132,7 @@ function dqn(env)
     data = rand(buffer, 10)
 
     # do your training like this (you may have to adjust some things, and you will have to do this many times):
-    Flux.Optimise.train!(loss, Q, data, Flux.setup(ADAM(0.0005), Q))
+    Flux.Optimise.train!(loss, Q, data, opt)
 
     # Make sure to evaluate, print, and plot often! You will want to save your best policy.
     
